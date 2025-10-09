@@ -7,11 +7,11 @@ public abstract class Character {
     protected GameObserver game_observer; 
 
 
-    public Character(String name, int health, AttackStrategy strategy, GameObserver observer) {
+    public Character(String name, int health, AttackStrategy strategy) {
         this.name = name;
         this.health = health;
         this.attack_strategy = strategy;
-        this.game_observer = observer;
+        this.game_observer = new BattleLog();
     }
 
     // геттеры 
@@ -27,6 +27,24 @@ public abstract class Character {
             // todo: вынести в отдельный метод =) 
             game_observer.onEvent("[LOG] " + name + "погиб.");
         }
+    }
+
+    public void performAttack(Character enemy) {
+        if (!isAlive()) {
+            game_observer.onEvent("[LOG] " + name + " мертв и не может атаковать");
+        }
+
+        if (attack_strategy == null) {
+            game_observer.onEvent("[LOG] " + name + "стартегии атаки нету");
+        }
+
+        attack_strategy.attack(this, enemy);
+    }
+
+
+    public void setAttackStrategy(AttackStrategy s) {
+        this.attack_strategy = s;
+        game_observer.onEvent("[LOG] " + name + "стратегия атаки сменилась)");
     }
 
     @Override
